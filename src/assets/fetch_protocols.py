@@ -1,7 +1,10 @@
 from urllib.request import Request, urlopen
+from dagster import asset, get_dagster_logger, define_asset_job, AssetSelection
+# from src.io_manager.file_io_manager import pdf_io_manager
 import requests
 import re, os
 
+logger = get_dagster_logger()
 
 def code_of_site(url):
     source_code = open("prefixio_page.txt", "w")
@@ -25,13 +28,12 @@ def find_games(filename):
     return game_codes
 
 
-def get_protocols(game):
+def get_protocols(match):
     url = "https://www.profixio.com/app/leagueid13825/match/"
-    match = game
     protocol = "/protocol/pdf"
     response = requests.get(url + match + protocol)
-    with open(f"protocols/{match}.pdf", "wb") as f:
-        f.write(response.content)
+    path = f"protocols/{match}.pdf"
+    return response.content
 
 def check_if_protocols_exist(protocols):
     path = os.path.abspath(os.getcwd())
@@ -39,16 +41,30 @@ def check_if_protocols_exist(protocols):
     missing = [x for x in protocols if not os.path.exists(path + folder + x + '.pdf')]
     return missing
 
-def main():
-    url = (
-        "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk"
-    )
-    code_of_site(url)
-    list_of_games = find_games("prefixio_page.txt")
-    games = check_if_protocols_exist(list_of_games)
-    for game in games:
-        get_protocols(game=game)
+# @asset(io_manager_def=pdf_io_manager)
+# def fetch_protocol():
+#     url = (
+#         "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk"
+#     )
+#     code_of_site(url)
+#     list_of_games = find_games("prefixio_page.txt")
+#     logger.info(list_of_games)
+#     games = check_if_protocols_exist(list_of_games)
+#     logger.info(games)
+#     return get_protocols(game=games[0])
+# 
+# fetch_protocols_job = define_asset_job(
+#     "fetch_match_protocols",
+#     selection=AssetSelection.assets(fetch_protocol),
+# )
+
+@asset
+def return_a_list():
+    return [{'a': 1, 'b':4}]
+
+return_a_list_job = define_asset_job(
+    name='example_job',
+    selection=AssetSelection.assets(return_a_list)
+)
 
 
-if __name__ == "__main__":
-    main()
