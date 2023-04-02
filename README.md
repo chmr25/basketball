@@ -1,18 +1,48 @@
-# Hello there #
+# adrian_basket
 
-Here is a amateur data analysis project
-for an old people's basketball league.
+This is a [Dagster](https://dagster.io/) project scaffolded with [`dagster project scaffold`](https://docs.dagster.io/getting-started/create-new-project).
 
-Adrian Basket Boys (ABB) is a historic club
-in Westra Div.4. However, they suck at division 3.
+## Getting started
 
-In this project, we will try to figure out why :)
+First, install your Dagster code location as a Python package. By using the --editable flag, pip will install your Python package in ["editable mode"](https://pip.pypa.io/en/latest/topics/local-project-installs/#editable-installs) so that as you develop, local code changes will automatically apply.
 
-## Fetch_protocols ##
-Python file for fetching protocols from played games
-Source: profixio website
-WIP of course
+```bash
+pip install -e ".[dev]"
+```
 
-Extra steps needed:
- - Add nice description for "simple" people
- - Create a class (if needed). dont know yet
+Then, start the Dagster UI web server:
+
+```bash
+dagster dev
+```
+
+Open http://localhost:3000 with your browser to see the project.
+
+You can start writing assets in `adrian_basket/assets.py`. The assets are automatically loaded into the Dagster code location as you define them.
+
+## Development
+
+
+### Adding new Python dependencies
+
+You can specify new Python dependencies in `setup.py`.
+
+### Unit testing
+
+Tests are in the `adrian_basket_tests` directory and you can run tests using `pytest`:
+
+```bash
+pytest adrian_basket_tests
+```
+
+### Schedules and sensors
+
+If you want to enable Dagster [Schedules](https://docs.dagster.io/concepts/partitions-schedules-sensors/schedules) or [Sensors](https://docs.dagster.io/concepts/partitions-schedules-sensors/sensors) for your jobs, the [Dagster Daemon](https://docs.dagster.io/deployment/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.
+
+Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
+
+## Deploy on Dagster Cloud
+
+The easiest way to deploy your Dagster project is to use Dagster Cloud.
+
+Check out the [Dagster Cloud Documentation](https://docs.dagster.cloud) to learn more.

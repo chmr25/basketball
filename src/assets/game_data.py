@@ -1,5 +1,12 @@
 import fitz
 import pandas as pd
+import uuid
+import json
+from dagster import asset, get_dagster_logger, AssetIn
+from datetime import datetime
+from src.io_manager.postgres_io_manager import RawBasketInput
+
+logger = get_dagster_logger()
 
 
 def get_words_from_pdf(pdf_path):
@@ -87,12 +94,15 @@ def clean_period_data(actual_words: list):
     timeouts = [
         index - 2 for index, element in enumerate(game_data) if element == "timeout"
     ]
+    print(f"Timeouts: {timeouts}")
     count = 0
     for i in range(len(timeouts)):
         game_data.insert(timeouts[i] + count, "timeout!")
         count += 1
+    print(f"The count is : {count}")
     period_rows = []
     for i in range(0, len(game_data), 7):
+        print(i)
         period_rows.append(
             {
                 "score": game_data[i] + game_data[i + 1] + game_data[i + 2],
@@ -101,4 +111,59 @@ def clean_period_data(actual_words: list):
                 "basket_count": game_data[i + 6],
             }
         )
-    return pd.DataFrame(period_rows)
+    return period_rows
+
+
+def get_team_names(words):
+    for index, word in enumerate(words):
+        if word == "Hemmalag:":
+            start_hem = index + 1
+        elif word == "Bortalag:":
+            stop_hem = index
+            start_bort = index + 1
+        elif word == "Competition:":
+            stop_bort = index
+            break
+    return {
+        "hem": " ".join(str(w) for w in words[start_hem:stop_hem]),
+        "bort": " ".join(str(w) for w in words[start_bort:stop_bort]),
+    }
+
+def get_game_timestamp(words):
+    format = "%Y-%m-%d %H:%M"
+    for index,word in enumerate(words):
+        if word == 'Date' and words[index+1] == '&' and words[index+2]=='time:':
+            date_time = words[index+3] + ' ' + words[index+4]
+    return datetime.strptime(date_time, format)
+
+def create_game_entry(periods, teams, protocol, game_timestamp):
+    logger.info(protocol.split("/")[-1])
+    return RawBasketInput(
+        id=str(uuid.uuid5(uuid.NAMESPACE_DNS, protocol.split("/")[-1])),
+        ingested_date=datetime.today(),
+        home_team=teams["hem"],
+        away_team=teams["bort"],
+        game_timestamp=game_timestamp,
+        game_data=str(periods),
+    )
+
+
+@asset(
+    ins={"files": AssetIn("download_pdfs")},
+    required_resource_keys={"local_folder"},
+    group_name="game_stats",
+    io_manager_def="postgres_io_manager",
+)
+def get_game_data(files):
+    logger.info(files)
+    logger.info(f"Data of {len(files)} games will be added")
+    match = []
+    for pdf in files:
+        logger.info(pdf)
+        actual_words = get_words_from_pdf(pdf)
+        periods = clean_period_data(actual_words)
+        teams = get_team_names(actual_words)
+        game_timestamp = get_game_timestamp(actual_words)
+        match.append(create_game_entry(periods=periods, teams=teams, protocol=pdf, game_timestamp=game_timestamp))
+    return match
+    
