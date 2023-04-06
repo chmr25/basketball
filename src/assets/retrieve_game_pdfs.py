@@ -1,5 +1,5 @@
 from urllib.request import Request, urlopen
-from dagster import asset, get_dagster_logger, define_asset_job, AssetSelection
+from dagster import asset, get_dagster_logger
 import requests
 import re, os
 
@@ -39,13 +39,6 @@ def get_protocols(matches):
     return pdfs
 
 
-def check_if_protocols_exist(protocols):
-    path = os.path.abspath(os.getcwd())
-    folder = "/protocols/"
-    missing = [x for x in protocols if not os.path.exists(path + folder + x + ".pdf")]
-    return missing
-
-
 @asset(required_resource_keys={"local_folder"}, group_name="game_stats", name="download_pdfs")
 def fetch_protocol(context):
     urls = [
@@ -56,7 +49,6 @@ def fetch_protocol(context):
     for url in urls:
         code_of_site(url)
         list_of_games = find_games("prefixio_page.txt")
-        logger.info(len(list_of_games))
         file_obj = context.resources.local_folder
         pdfs_to_add = file_obj.check_if_protocol_exists(list_of_games)
         logger.info(f"{len(pdfs_to_add)} will be added")

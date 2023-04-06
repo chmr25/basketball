@@ -1,8 +1,6 @@
-import paramiko
 import os
-from dagster import resource, get_dagster_logger, InitResourceContext
+from dagster import resource
 
-logger = get_dagster_logger()
 
 
 class FileStorage:

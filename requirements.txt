@@ -1,0 +1,7 @@
+PyMuPDF
+dagster
+dagit
+dagster-postgres
+dagster-docker
+datetime
+pandas

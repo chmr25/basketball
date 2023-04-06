@@ -1,13 +1,13 @@
-from dagster import Definitions, load_assets_from_modules, define_asset_job, ScheduleDefinition
+from dagster import load_assets_from_modules, define_asset_job, ScheduleDefinition, create_repository_using_definitions_args
 from src.io_manager.postgres_io_manager import postgres_io_manager
 from src.resources.file_finder import store_to_folder
 from src.assets import retrieve_game_pdfs, game_data
 import os
 
-user = os.environ.get("DB_USER")
-passw = os.environ.get("DB_PASS")
+USER = os.getenv("DB_USER")
+PASSW = os.getenv("DB_PASS")
 
-conn_str = f"postgresql://{user}:{passw}@christos-N501VW:5432/postgres"
+conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.130:5432/postgres"
 
 fetch_protocol_job = define_asset_job(
     name="fetch_protocols_process",
@@ -18,7 +18,7 @@ weekly_schedule = ScheduleDefinition(job=fetch_protocol_job, cron_schedule="0 9 
 
 path_to_local_folder  = store_to_folder.configured(
     {
-        "target_path": "/Users/christosmarinos/protocols"
+        "target_path": "protocols"
     }
 )
 postgres_io_manager_conf = postgres_io_manager.configured(
@@ -27,7 +27,8 @@ postgres_io_manager_conf = postgres_io_manager.configured(
     }
 )
 
-defs = Definitions(
+basketball = create_repository_using_definitions_args(
+    name="basketball_adrian",
     assets=load_assets_from_modules([retrieve_game_pdfs]) + load_assets_from_modules([game_data]),
     jobs=[fetch_protocol_job],
     schedules=[weekly_schedule],

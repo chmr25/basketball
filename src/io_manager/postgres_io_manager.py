@@ -1,4 +1,3 @@
-import sqlalchemy
 from sqlalchemy import create_engine, Column, JSON, String, Date, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
@@ -11,11 +10,7 @@ from dagster import (
     io_manager,
     get_dagster_logger,
 )
-from sqlalchemy.dialects.postgresql import insert
-from typing import Optional
-from datetime import datetime, date
-# from psycopg2.errors import UniqueViolation
-from sqlalchemy.exc import IntegrityError
+import os
 
 logger = get_dagster_logger()
 Base=declarative_base()
@@ -53,7 +48,6 @@ class PostgresIOManager(IOManager):
 def postgres_io_manager(init_context: InitResourceContext):
     assert init_context.instance is not None
     conn_str = init_context.resource_config["conn_str"]
-    logger.info(conn_str)
     return PostgresIOManager(conn_str=conn_str)
 
 
