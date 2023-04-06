@@ -1,0 +1,6 @@
+PyMuPDF
+dagster==1.1.19
+dagit==1.1.19
+dagster-postgres
+datetime
+pandas

@@ -1,10 +1,9 @@
 import fitz
-import pandas as pd
 import uuid
-import json
 from dagster import asset, get_dagster_logger, AssetIn
 from datetime import datetime
 from src.io_manager.postgres_io_manager import RawBasketInput
+import os
 
 logger = get_dagster_logger()
 
@@ -155,11 +154,9 @@ def create_game_entry(periods, teams, protocol, game_timestamp):
     io_manager_def="postgres_io_manager",
 )
 def get_game_data(files):
-    logger.info(files)
     logger.info(f"Data of {len(files)} games will be added")
     match = []
     for pdf in files:
-        logger.info(pdf)
         actual_words = get_words_from_pdf(pdf)
         periods = clean_period_data(actual_words)
         teams = get_team_names(actual_words)
