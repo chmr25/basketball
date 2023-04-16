@@ -22,6 +22,7 @@ class RawBasketInput(Base):
     home_team = Column(String)
     away_team = Column(String)
     game_timestamp = Column(DateTime)
+    game_score = Column(String)
     game_data = Column(JSON)
 
 class PostgresIOManager(IOManager):

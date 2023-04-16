@@ -136,7 +136,13 @@ def get_game_timestamp(words):
             date_time = words[index+3] + ' ' + words[index+4]
     return datetime.strptime(date_time, format)
 
-def create_game_entry(periods, teams, protocol, game_timestamp):
+def get_game_score(words):
+    for index,word in enumerate(words):
+        if word == "Final" and words[index+1] == "score" and words[index+5] == "Sekreterare":
+            game_score = words[index+2] + "-" + words[index+4]
+    return game_score
+
+def create_game_entry(periods, teams, protocol, game_timestamp, game_score):
     logger.info(protocol.split("/")[-1])
     return RawBasketInput(
         id=str(uuid.uuid5(uuid.NAMESPACE_DNS, protocol.split("/")[-1])),
@@ -144,6 +150,7 @@ def create_game_entry(periods, teams, protocol, game_timestamp):
         home_team=teams["hem"],
         away_team=teams["bort"],
         game_timestamp=game_timestamp,
+        game_score=game_score,
         game_data=periods,
     )
 
@@ -162,6 +169,7 @@ def get_game_data(files):
         periods = clean_period_data(actual_words)
         teams = get_team_names(actual_words)
         game_timestamp = get_game_timestamp(actual_words)
-        match.append(create_game_entry(periods=periods, teams=teams, protocol=pdf, game_timestamp=game_timestamp))
+        game_score = get_game_score(actual_words)
+        match.append(create_game_entry(periods=periods, teams=teams, protocol=pdf, game_timestamp=game_timestamp, game_score=game_score))
     return match
     
