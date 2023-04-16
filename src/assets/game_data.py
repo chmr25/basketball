@@ -136,6 +136,12 @@ def get_game_timestamp(words):
             date_time = words[index+3] + ' ' + words[index+4]
     return datetime.strptime(date_time, format)
 
+def get_game_score(words):
+    for index,word in enumerate(words):
+        if word == "Final" and words[index+1] == "score" and words[index+5] == "Sekreterare":
+            game_score = words[index+2] + "-" + words[index+4]
+    return game_score
+
 def create_game_entry(periods, teams, protocol, game_timestamp):
     logger.info(protocol.split("/")[-1])
     return RawBasketInput(
