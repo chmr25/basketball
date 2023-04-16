@@ -4,6 +4,7 @@ from dagster import asset, get_dagster_logger, AssetIn
 from datetime import datetime
 from src.io_manager.postgres_io_manager import RawBasketInput
 import os
+import json
 
 logger = get_dagster_logger()
 
@@ -104,10 +105,10 @@ def clean_period_data(actual_words: list):
         print(i)
         period_rows.append(
             {
-                "score": game_data[i] + game_data[i + 1] + game_data[i + 2],
-                "player": game_data[i + 3],
-                "team": game_data[i + 4] + "" + game_data[i + 5],
-                "basket_count": game_data[i + 6],
+                'score': game_data[i] + game_data[i + 1] + game_data[i + 2],
+                'player': game_data[i + 3],
+                'team': game_data[i + 4] + "" + game_data[i + 5],
+                'basket_count': game_data[i + 6],
             }
         )
     return period_rows
@@ -143,7 +144,7 @@ def create_game_entry(periods, teams, protocol, game_timestamp):
         home_team=teams["hem"],
         away_team=teams["bort"],
         game_timestamp=game_timestamp,
-        game_data=str(periods),
+        game_data=periods,
     )
 
 

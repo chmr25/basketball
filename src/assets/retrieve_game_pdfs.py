@@ -45,7 +45,6 @@ def fetch_protocol(context):
         "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk",
         "https://www.profixio.com/app/leagueid13825/category/1133937?segment=historikk"
     ]
-    pdfs_total = []
     for url in urls:
         code_of_site(url)
         list_of_games = find_games("prefixio_page.txt")
@@ -54,8 +53,8 @@ def fetch_protocol(context):
         logger.info(f"{len(pdfs_to_add)} will be added")
         pdfs = get_protocols(matches=pdfs_to_add)
         file_obj.write_to_path(pdfs=pdfs)
-        pdfs_total.append(
-            context.resources.local_folder.target_path + '/' + pdf
+        pdfs_total = [
+            context.resources.local_folder.target_path + '/' + pdf + '.pdf'
             for pdf in pdfs_to_add
-        )
-        return pdfs_to_add
+        ]
+        return pdfs_total
