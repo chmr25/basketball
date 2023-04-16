@@ -7,7 +7,7 @@ import os
 USER = os.getenv("DB_USER")
 PASSW = os.getenv("DB_PASS")
 
-conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.130:5432/postgres"
+conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.66:5432/postgres"
 
 fetch_protocol_job = define_asset_job(
     name="fetch_protocols_process",
