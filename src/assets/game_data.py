@@ -108,7 +108,7 @@ def clean_period_data(actual_words: list):
                 'score': game_data[i] + game_data[i + 1] + game_data[i + 2],
                 'player': game_data[i + 3],
                 'team': game_data[i + 4] + "" + game_data[i + 5],
-                'basket_count': game_data[i + 6],
+                "basket_count": game_data[i + 6],
             }
         )
     return period_rows
@@ -167,6 +167,7 @@ def get_game_data(files):
     for pdf in files:
         actual_words = get_words_from_pdf(pdf)
         periods = clean_period_data(actual_words)
+        logger.info(periods)
         teams = get_team_names(actual_words)
         game_timestamp = get_game_timestamp(actual_words)
         game_score = get_game_score(actual_words)
