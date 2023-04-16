@@ -43,7 +43,8 @@ def get_protocols(matches):
 def fetch_protocol(context):
     urls = [
         "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk",
-        "https://www.profixio.com/app/leagueid13825/category/1133937?segment=historikk"
+        "https://www.profixio.com/app/leagueid13825/category/1133937?segment=historikk",
+        "https://www.profixio.com/app/leagueid13825/category/1128801?segment=historikk"
     ]
     profixio_pdfs = []
     for url in urls:
