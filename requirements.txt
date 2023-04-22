@@ -5,3 +5,6 @@ dagster-postgres
 dagster-docker
 datetime
 pandas
+dbt-core
+dbt-extractor
+dbt-postgres
