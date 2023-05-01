@@ -157,6 +157,8 @@ def create_game_entry(periods, teams, protocol, game_timestamp, game_score):
 
 @asset(
     ins={"files": AssetIn("download_pdfs")},
+    key_prefix=["public"],
+    name="raw_basket_input",
     required_resource_keys={"local_folder"},
     group_name="game_stats",
     io_manager_def="postgres_io_manager",

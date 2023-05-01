@@ -9,7 +9,7 @@ with source as (
     game_timestamp,
     game_score,
     game_data::jsonb
-from raw_basket_input
+from {{ source('public', 'raw_basket_input')}}
     where game_data::varchar != 'null'
 ),
 
