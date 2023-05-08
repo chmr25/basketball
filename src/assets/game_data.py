@@ -1,6 +1,6 @@
 import fitz
 import uuid
-from dagster import asset, get_dagster_logger, AssetIn
+from dagster import asset, get_dagster_logger, AssetIn, AssetOut
 from datetime import datetime
 from src.io_manager.postgres_io_manager import RawBasketInput
 import os
@@ -157,11 +157,11 @@ def create_game_entry(periods, teams, protocol, game_timestamp, game_score):
 
 @asset(
     ins={"files": AssetIn("download_pdfs")},
-    key_prefix=["public"],
     name="raw_basket_input",
     required_resource_keys={"local_folder"},
-    group_name="game_stats",
-    io_manager_def="postgres_io_manager",
+    key_prefix=["transformations"],
+    group_name="collect_data",
+    io_manager_key="postgres_io_manager",
 )
 def get_game_data(files):
     logger.info(f"Data of {len(files)} games will be added")

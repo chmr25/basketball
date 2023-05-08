@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 with source as (
-    select * from {{ source('public', 'game_stats')}}
+    select * from {{ ref("game_stats") }}
 ),
 
 home_teams as (

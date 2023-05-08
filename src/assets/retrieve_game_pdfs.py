@@ -39,7 +39,7 @@ def get_protocols(matches):
     return pdfs
 
 
-@asset(required_resource_keys={"local_folder"}, group_name="game_stats", name="download_pdfs")
+@asset(required_resource_keys={"local_folder"}, group_name="collect_data", name="download_pdfs")
 def fetch_protocol(context):
     urls = [
         "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk",

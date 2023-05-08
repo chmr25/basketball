@@ -1,13 +1,13 @@
-from dagster import load_assets_from_modules, define_asset_job, ScheduleDefinition, create_repository_using_definitions_args
-from dagster_dbt import dbt_cli_resource
+from dagster import load_assets_from_modules,Definitions
+from dagster_dbt import DbtCliClientResource
 from src.io_manager.postgres_io_manager import postgres_io_manager
 from src.resources.file_finder import store_to_folder
 from src.assets import DBT_PROFILES, DBT_PROJECT_PATH
 from src import assets
 import os
 
-USER = os.getenv("DB_USER")
-PASSW = os.getenv("DB_PASS")
+USER = "basketball"
+PASSW = "adrian"
 
 conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.66:5432/postgres"
 
@@ -20,7 +20,7 @@ conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.66:5432/postgres"
 
 path_to_local_folder  = store_to_folder.configured(
     {
-        "target_path": "protocols"
+        "target_path": "/Users/christosmarinos/protocols"
     }
 )
 postgres_io_manager_conf = postgres_io_manager.configured(
@@ -28,15 +28,12 @@ postgres_io_manager_conf = postgres_io_manager.configured(
         "conn_str": conn_str
     }
 )
-dbt_configured = dbt_cli_resource.configured(
-        {
-            "project_dir": DBT_PROJECT_PATH,
-            "profiles_dir": DBT_PROFILES,
-        },
-    ),
+dbt_configured = DbtCliClientResource(
+            project_dir=DBT_PROJECT_PATH,
+            profiles_dir=DBT_PROFILES,
+)
 
-basketball = create_repository_using_definitions_args(
-    name="basketball_adrian",
+basketball = Definitions(
     assets=load_assets_from_modules([assets]),
     jobs=[],
     schedules=[],

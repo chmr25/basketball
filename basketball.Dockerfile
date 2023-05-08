@@ -16,6 +16,8 @@ RUN pip install -r requirements.txt
 
 COPY src/ /opt/dagster/app/src
 
+COPY transformations/ /opt/dagster/app/transformations
+
 WORKDIR /opt/dagster/app/
 
 EXPOSE 4005
