@@ -6,7 +6,7 @@ transformations:
       threads: 1
       host: 192.168.1.66
       port: 5432
-      user: basketball
-      pass: adrian
+      user: ${DB_USER}
+      pass: ${DB_PASS}
       dbname: dev
       schema: public

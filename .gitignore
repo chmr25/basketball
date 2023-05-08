@@ -3,3 +3,9 @@
 jupyter_files
 prefixio_page.txt
 tmp*
+transformations/target
+transformations/logs
+.DS_Store
+.env
+logs/
+pyvenv.cfg

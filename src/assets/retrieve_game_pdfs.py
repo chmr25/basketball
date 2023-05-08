@@ -39,11 +39,15 @@ def get_protocols(matches):
     return pdfs
 
 
-@asset(required_resource_keys={"local_folder"}, group_name="collect_data", name="download_pdfs")
+@asset(
+    name="download_pdfs",
+    required_resource_keys={"local_folder"},
+    group_name="collect_data",
+)
 def fetch_protocol(context):
     urls = [
         "https://www.profixio.com/app/leagueid13825/category/1128802?segment=historikk",
-        "https://www.profixio.com/app/leagueid13825/category/1133937?segment=historikk"
+        "https://www.profixio.com/app/leagueid13825/category/1133937?segment=historikk",
     ]
     profixio_pdfs = []
     for url in urls:
@@ -55,7 +59,7 @@ def fetch_protocol(context):
         pdfs = get_protocols(matches=pdfs_to_add)
         file_obj.write_to_path(pdfs=pdfs)
         pdfs_total = [
-            context.resources.local_folder.target_path + '/' + pdf + '.pdf'
+            context.resources.local_folder.target_path + "/" + pdf + ".pdf"
             for pdf in pdfs_to_add
         ]
         profixio_pdfs.extend(pdfs_total)

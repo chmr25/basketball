@@ -2,7 +2,6 @@ import os
 from dagster import resource
 
 
-
 class FileStorage:
     def __init__(self, target_dir) -> None:
         self.target_path = target_dir
@@ -19,10 +18,11 @@ class FileStorage:
             if not os.path.exists(self.target_path + "/" + x + ".pdf")
         ]
         return missing
-    
+
     def list_dir(self):
         pdfs = os.listdir(self.target_path)
-        return [self.target_path + '/' + file for file in pdfs]
+        return [self.target_path + "/" + file for file in pdfs]
+
 
 @resource(config_schema={"target_path": str})
 def store_to_folder(init_context):
