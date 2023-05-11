@@ -3,8 +3,6 @@ import uuid
 from dagster import asset, get_dagster_logger, AssetIn
 from datetime import datetime
 from src.io_manager.postgres_io_manager import RawBasketInput
-import os
-import json
 
 logger = get_dagster_logger()
 
@@ -105,10 +103,10 @@ def clean_period_data(actual_words: list):
         print(i)
         period_rows.append(
             {
-                'score': game_data[i] + game_data[i + 1] + game_data[i + 2],
-                'player': game_data[i + 3],
-                'team': game_data[i + 4] + "" + game_data[i + 5],
-                'basket_count': game_data[i + 6],
+                "score": game_data[i] + game_data[i + 1] + game_data[i + 2],
+                "player": game_data[i + 3],
+                "team": game_data[i + 4] + "" + game_data[i + 5],
+                "basket_count": game_data[i + 6],
             }
         )
     return period_rows
@@ -129,18 +127,25 @@ def get_team_names(words):
         "bort": " ".join(str(w) for w in words[start_bort:stop_bort]),
     }
 
+
 def get_game_timestamp(words):
     format = "%Y-%m-%d %H:%M"
-    for index,word in enumerate(words):
-        if word == 'Date' and words[index+1] == '&' and words[index+2]=='time:':
-            date_time = words[index+3] + ' ' + words[index+4]
+    for index, word in enumerate(words):
+        if word == "Date" and words[index + 1] == "&" and words[index + 2] == "time:":
+            date_time = words[index + 3] + " " + words[index + 4]
     return datetime.strptime(date_time, format)
 
+
 def get_game_score(words):
-    for index,word in enumerate(words):
-        if word == "Final" and words[index+1] == "score" and words[index+5] == "Sekreterare":
-            game_score = words[index+2] + "-" + words[index+4]
+    for index, word in enumerate(words):
+        if (
+            word == "Final"
+            and words[index + 1] == "score"
+            and words[index + 5] == "Sekreterare"
+        ):
+            game_score = words[index + 2] + "-" + words[index + 4]
     return game_score
+
 
 def create_game_entry(periods, teams, protocol, game_timestamp, game_score):
     logger.info(protocol.split("/")[-1])
@@ -157,9 +162,11 @@ def create_game_entry(periods, teams, protocol, game_timestamp, game_score):
 
 @asset(
     ins={"files": AssetIn("download_pdfs")},
+    name="raw_basket_input",
     required_resource_keys={"local_folder"},
-    group_name="game_stats",
-    io_manager_def="postgres_io_manager",
+    key_prefix=["transformations"],
+    group_name="collect_data",
+    io_manager_key="postgres_io_manager",
 )
 def get_game_data(files):
     logger.info(f"Data of {len(files)} games will be added")
@@ -170,6 +177,13 @@ def get_game_data(files):
         teams = get_team_names(actual_words)
         game_timestamp = get_game_timestamp(actual_words)
         game_score = get_game_score(actual_words)
-        match.append(create_game_entry(periods=periods, teams=teams, protocol=pdf, game_timestamp=game_timestamp, game_score=game_score))
+        match.append(
+            create_game_entry(
+                periods=periods,
+                teams=teams,
+                protocol=pdf,
+                game_timestamp=game_timestamp,
+                game_score=game_score,
+            )
+        )
     return match
-    

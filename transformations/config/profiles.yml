@@ -1,0 +1,12 @@
+transformations:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      threads: 1
+      host: 192.168.1.66
+      port: 5432
+      user: ${DB_USER}
+      pass: ${DB_PASS}
+      dbname: dev
+      schema: public
