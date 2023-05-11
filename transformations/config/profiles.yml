@@ -6,7 +6,7 @@ transformations:
       threads: 1
       host: 192.168.1.66
       port: 5432
-      user: basketball
-      pass: adrian
+      user: "{{ env_var('DB_USER') }}"
+      pass: "{{ env_var('DB_PASS') }}"
       dbname: dev
       schema: public
