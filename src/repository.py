@@ -16,7 +16,7 @@ import os
 USER = os.getenv("DB_USER")
 PASSW = os.getenv("DB_PASS")
 
-conn_str = f"postgresql://{USER}:{PASSW}@192.168.1.66:5432/postgres"
+conn_str = f"postgresql://{USER}:{PASSW}@christos-un45h.local:5432/postgres"
 
 fetch_protocol_job = define_asset_job(
     name="collect_profixio_data",
@@ -26,7 +26,7 @@ fetch_protocol_job = define_asset_job(
 weekly_schedule = ScheduleDefinition(job=fetch_protocol_job, cron_schedule="0 9 * * 1")
 
 
-path_to_local_folder = store_to_folder.configured({"target_path": "/protocols"})
+path_to_local_folder = store_to_folder.configured({"target_path": "/opt/dagster/app/protocols"})
 postgres_io_manager_conf = postgres_io_manager.configured({"conn_str": conn_str})
 
 
