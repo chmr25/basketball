@@ -2,6 +2,7 @@
 .ipynb_checkpoints
 prefixio_page.txt
 tmp*
+jupyter_files
 transformations/target
 transformations/logs
 .DS_Store
